@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake</title>
+    <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body background="musicas/true.mp3" loop="3" id="body1">
+<div id="menu3">
+    <audio autoplay loop>
+        <source src="musicas/true.mp3" type="audio/mp3">
+    </audio>
+    <div id="score"></div>
+    <canvas id="canvas" width="420" height="420"></canvas>
+</div>
+<script>
+    window.onload = function () {
+        Canvas = document.getElementById("canvas");
+        ctx = canvas.getContext('2d');
+            //controles
+        document.addEventListener("keydown", function (e) {
+            const keyPressed = e.keyCode;
+                const goingUp = velY === -1;
+                const goingDown = velY === 1;
+                const goingRight = velX === 1;
+                const goingLeft = velX === -1;
+
+                if (keyPressed === leftKey && !goingRight) {
+                    velX = -1;
+                    velY = 0;
+                }
+
+                if (keyPressed === upKey && !goingDown) {
+                    velX = 0;
+                    velY = -1;
+                }
+
+                if (keyPressed === rightKey && !goingLeft) {
+                    velX = 1;
+                    velY = 0;
+                }
+
+                if (keyPressed === downKey && !goingUp) {
+                    velX = 0;
+                    velY = 1;
+                }
+        });
+
+        setInterval(jogo, 1000 / 10);
+    }
+    //variaveis
+     //variaveis
+     keyPressed = false
+        leftKey = 37;
+        upKey = 38;
+        rightKey = 39;
+        downKey = 40;
+    score = 0
+    snake = [];
+    positionX = 10;
+    positionY = 10;
+    foodX = 15;
+    foodY = 15;
+    velX = 0;
+    velY = 0;
+    grid = 20;
+    tam = 3;
+    sound = new Audio('bite.mp3')
+        //estrutura principal
+    function jogo() {
+        positionX += velX;
+        positionY += velY;
+
+        if (positionX < 0) {
+            positionX = grid
+        }
+        if (positionX > grid) {
+            positionX = 0
+        }
+        if (positionY < 0) {
+            positionY = grid
+        }
+        if (positionY > grid) {
+            positionY = 0
+        }
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        document.getElementById("score").innerHTML = score
+
+        ctx.fillStyle = "white";
+        //loop do crescimento da cobrinha
+        for (var i = 0; i < snake.length; i++) {
+            ctx.fillRect(snake[i].x * grid, snake[i].y * grid, grid , grid );
+            //condição do jogador perder
+            if (snake[i].x == positionX && snake[i].y == positionY && tam > 3) {
+                tam = 3;
+                ctx.fillStyle = "red";
+                score = 0
+                document.getElementById("score").innerHTML = score
+            }
+        }
+        
+        snake.push({ x: positionX, y: positionY });
+        
+        while (snake.length > tam) {
+            snake.shift();
+        }
+        ctx.fillStyle = "green";
+        ctx.fillRect(foodX * grid, foodY * grid, grid - 1, grid - 1);
+        //condição da posição da comida
+        if (positionX == foodX && positionY == foodY) {
+            tam++;
+            score++;
+            foodX = Math.floor(Math.random() * grid);
+            foodY = Math.floor(Math.random() * grid);
+            document.getElementById("score").innerHTML = score
+            sound.play()
+        }
+    }
+            
+</script>
+</body>
+</html>
